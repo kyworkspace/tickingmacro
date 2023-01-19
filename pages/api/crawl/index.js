@@ -168,7 +168,7 @@ const excuteFunction = async (body) => {
                 for (const [index, tr] of trs.entries()) {
                     if (!result) {
                         const tds = await tr.$$("td");
-                        if (tds || tds.length > 4) {
+                        if (tds.length > 6) {
                             //지정한 시간인지 확인
                             const timeEle = await tds[3].$("em");
                             const timeText = await (await timeEle.getProperty("textContent")).jsonValue();
@@ -182,9 +182,6 @@ const excuteFunction = async (body) => {
                                 if (text === "예약하기") {
                                     result = true;
                                     aTag.click();
-                                    setTimeout(async () => {
-                                        console.log(`${++searchCount}회째 검색 후 예약 되었습니다.`)
-                                    }, 1000)
                                     break;
                                 }
                             }
