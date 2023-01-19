@@ -168,26 +168,30 @@ const excuteFunction = async (body) => {
                 for (const [index, tr] of trs.entries()) {
                     if (!result) {
                         const tds = await tr.$$("td");
+                        if (tds || tds.length > 4) {
+                            //지정한 시간인지 확인
+                            const timeEle = await tds[3].$("em");
+                            const timeText = await (await timeEle.getProperty("textContent")).jsonValue();
 
-                        //지정한 시간인지 확인
-                        const timeEle = await tds[3].$("em");
-                        const timeText = await (await timeEle.getProperty("textContent")).jsonValue();
+                            if (!timeCompare(timeText, "lower", endTime)) skip = true; //지정 시간을 초과한 경우에는 break
 
-                        if (!timeCompare(timeText, "lower", endTime)) skip = true; //지정 시간을 초과한 경우에는 break
-
-                        if (timeCompare(timeText, "over", startTime) && timeCompare(timeText, "lower", endTime)) {
-                            //예약하기 버튼칸
-                            const aTag = await tds[6].$("a");
-                            const text = await (await aTag.getProperty("textContent")).jsonValue();
-                            if (text === "예약하기") {
-                                result = true;
-                                aTag.click();
-                                setTimeout(async () => {
-                                    console.log(`${++searchCount}회째 검색 후 예약 되었습니다.`)
-                                }, 1000)
-                                break;
+                            if (timeCompare(timeText, "over", startTime) && timeCompare(timeText, "lower", endTime)) {
+                                //예약하기 버튼칸
+                                const aTag = await tds[6].$("a");
+                                const text = await (await aTag.getProperty("textContent")).jsonValue();
+                                if (text === "예약하기") {
+                                    result = true;
+                                    aTag.click();
+                                    setTimeout(async () => {
+                                        console.log(`${++searchCount}회째 검색 후 예약 되었습니다.`)
+                                    }, 1000)
+                                    break;
+                                }
                             }
+                        } else {
+                            continue;
                         }
+
                     } else {
                         break;
                     }
